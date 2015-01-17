@@ -5,13 +5,20 @@ var router = express.Router();
 router.get('/read/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, req.params.documentName].join('/')
     fs.readFile(path, { encoding: "utf-8" }, function(err, data) {
-        if(err) throw err;
-
-        res.send({
-            username: req.params.username,
-            documentName: req.params.documentName,
-            contents: data
-        });
+        if(err) {
+            res.send({
+                status: "fail",
+                message: "file not found"
+            })
+        }
+        else {
+            res.send({
+                status: "ok",
+                username: req.params.username,
+                documentName: req.params.documentName,
+                contents: data
+            });
+        }
     });
 });
 
