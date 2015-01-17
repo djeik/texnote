@@ -16,6 +16,26 @@ router.get('/read/:username/:documentName', function(req, res) {
     });
 });
 
+router.get('/list/:username', function(req, res) {
+    var path = ["files", req.params.username].join('/')
+    fs.readdir(path, function(err, files) {
+        if(err) {
+            res.send({
+                status: "fail",
+                message: "unable to get files",
+                username: req.params.username
+            });
+        }
+        else {
+            res.send({
+                status: "ok",
+                username: req.params.username,
+                files: files
+            });
+        }
+    });
+});
+
 router.post('/write', function(req, res) {
     var path = ["files", req.body.username, req.body.documentName].join('/')
     fs.writeFile(path, req.body.contents, function(err) {
