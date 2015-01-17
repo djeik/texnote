@@ -53,7 +53,8 @@ router.post('/write', function(req, res) {
         }
         else {
             res.send({
-                status: "ok"
+                status: "ok",
+                documentName: req.body.documentName
             });
         }
     });

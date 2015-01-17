@@ -23,6 +23,11 @@
                         {{document}}
                     </button>
                 </li>
+                <li>
+                    <form ng-submit="addNewFile()">
+                        <input type="text" placeholder="New file..." ng-model="newFileName">
+                    </form>
+                </li>
             </ul>
         </div>
         <div id="editor">

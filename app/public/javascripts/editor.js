@@ -1,7 +1,15 @@
 var texnote = angular.module('texnote',[]);
 
 texnote.controller('EditorController',['$scope', '$http', function($scope, $http) {
-    $scope.documents = ["testdata","moretestdata"];
+    $scope.documents = []
+    $http.get("/api/list/testuser")
+        .success(function(resp) {
+            if(resp.status === "ok") {
+                console.log("got files");
+                $scope.documents = resp.files
+            }
+        });
+
     $scope.focus = null;
     $scope.user = "testuser";
     $scope.editor = ace.edit("editor");
@@ -15,11 +23,23 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             contents: $scope.editor.getValue()
         });
     };
+
     $scope.changeDoc = function(doc) {
         $http.get(["api/read", $scope.user, doc].join('/'))
             .success(function(result) {
                 $scope.editor.setValue(result.contents);
                 $scope.focus = doc;
             })
-        };
+    };
+
+    $scope.addNewFile = function() {
+        console.log("adding new file")
+        $http.post("/api/write", { username: $scope.user, documentName: $scope.newFileName })
+            .success(function(resp) {
+                if(resp.status === "ok") {
+                    $scope.documents.push(resp.documentName)
+                }
+            });
+    };
+
     }]);
