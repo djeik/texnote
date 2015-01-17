@@ -10,7 +10,7 @@
     <script>
         var texnote = angular.module('texnote',[]);
         texnote.controller('EditorController',['$scope', function($scope) {
-            $scope.curDocs = [];
+            $scope.documents = ["testdata","moretestdata"];
             $scope.focus = null;
             $scope.user = "testuser";
             $scope.save = function() {
@@ -18,12 +18,25 @@
                     documentName: $scope.focus,
                     username: $scope.user,
                     contents: document.getElementById("editor").getValue()
+
                 });
             };
+            $scope.changeDoc = function(doc) {
+                var temp= $http.get("api/read/" + $scope.user + "/" + doc);
+                document.getElementById("editor").setValue(temp);
+                $scope.focus=doc;
+                };
             }]);
     </script>
-    <div ng-controller="EditorController">
-        <button id="MainButton" ng-click="$scope.save()"></button>
+    <div ng-controller="EditorController" id="editor-container">
+        <div id="button-container">
+            <button id="main-button" ng-click="save()"></button>
+            <ul>
+                <li ng-repeat="document in documents" ng-click="changeDoc(document)">
+                {{document}}
+                </li>
+            </ul>
+        </div>
         <div id="editor">
         </div>
     </div>
