@@ -2,6 +2,19 @@ var express = require('express');
 var fs = require('fs');
 var router = express.Router();
 
+
+router.post('/compile', function(req, res) {
+    var path = ["files",req.body.username].join('/')
+            var exec = require('child_process').exec;
+            exec(['/usr/bin/pdflatex -halt-on-error -output-directory',path,[path, req.body.documentName].join('/')].join(' '), function(error, stdout, stderr) {
+                res.send({
+                    stdout: stdout ,
+                    error: error ,
+                    stderr: stderr
+                })
+            });
+        });
+
 router.get('/read/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, req.params.documentName].join('/')
     fs.readFile(path, { encoding: "utf-8" }, function(err, data) {

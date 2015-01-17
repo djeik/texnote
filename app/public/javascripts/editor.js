@@ -23,12 +23,22 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             contents: $scope.editor.getValue()
         });
     };
+    $scope.compile = function() {
+        $http.post("/api/compile", {
+            username: $scope.user,
+            documentName: $scope.focus
+        }).success(function(result){
+            console.log(result.stderr);
+            console.log(result.stdout);
+            console.log(result.error );
+        })
+    };
 
     $scope.changeDoc = function(doc) {
-        $http.get(["api/read", $scope.user, doc].join('/'))
+        $http.get(["/api/read", $scope.user,doc].join('/'))
             .success(function(result) {
-                $scope.editor.setValue(result.contents);
-                $scope.focus = doc;
+                $scope.editor.setValue(result.contents),
+                $scope.focus = doc
             })
     };
 
