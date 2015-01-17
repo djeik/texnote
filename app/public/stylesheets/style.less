@@ -1,15 +1,38 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    max-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+div#banner {
+    height: 10vh;
+    position: fixed;
+    width: 100%;
+    box-shadow: inset 0 6px -6px black;
+
+    h1 {
+        font-size: 9vh;
+    }
+}
+
+div#editor-container {
+    width: 90%;
+    top: 11vh;
+    position: absolute;
+}
+
+div#main-sidebar {
+    width: 15%;
+    position: fixed;
+    float: left;
 }
 
 #editor {
-    position: absolute;
     margin: 0 auto;
-    width: 50%;
     height: 100%;
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
