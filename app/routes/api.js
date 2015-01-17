@@ -39,7 +39,17 @@ router.get('/list/:username', function(req, res) {
 router.post('/write', function(req, res) {
     var path = ["files", req.body.username, req.body.documentName].join('/')
     fs.writeFile(path, req.body.contents, function(err) {
-        if(err) throw err;
+        if(err) {
+            res.send({
+                status: "fail",
+                message: "unable to write file"
+            });
+        }
+        else {
+            res.send({
+                status: "ok"
+            });
+        }
     });
 });
 
