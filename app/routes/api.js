@@ -3,7 +3,6 @@ var fs = require('fs');
 var router = express.Router();
 
 router.get('/read/:username/:documentName', function(req, res) {
-    console.log("asdf");
     var path = ["files", req.params.username, req.params.documentName].join('/')
     fs.readFile(path, { encoding: "utf-8" }, function(err, data) {
         if(err) throw err;
