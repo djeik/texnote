@@ -12,6 +12,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 
     $scope.focus = null;
     $scope.user = "testuser";
+    $scope.hideNotifications = true;
     $scope.editor = ace.edit("editor");
     $scope.editor.setTheme("ace/theme/monokai");
     $scope.editor.getSession().setMode("ace/mode/latex");
@@ -43,11 +44,11 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     };
 
     $scope.addNewFile = function() {
-        console.log("adding new file")
         $http.post("/api/write", { username: $scope.user, documentName: $scope.newFileName })
             .success(function(resp) {
                 if(resp.status === "ok") {
-                    $scope.documents.push(resp.documentName)
+                    $scope.documents.push(resp.documentName);
+                    $scope.newFileName = "";
                 }
             });
     };

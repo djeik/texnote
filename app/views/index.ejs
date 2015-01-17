@@ -14,8 +14,16 @@
     <div ng-controller="EditorController" id="editor-container">
         <div id="main-sidebar">
             <div id="banner">
-                <h1>TeXnote</h1>
+                TeXnote
             </div>
+            <hr>
+            <div id="notifications" ng-hide="hideNotifications">
+                <ul>
+                    <li ng-repeat="notification in notifications" class="notification-type-{{notification.type}}">
+                    </li>
+                </ul>
+            </div>
+
             <button id="save-button" ng-click="save()">Save</button>
             <button id="compile-button" ng-click="compile()"> Compile </button>
             <ul>
