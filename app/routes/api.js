@@ -18,7 +18,7 @@ router.post('/compile', function(req, res) {
 });
 
 router.get('/pdf/:username/:documentName', function(req, res) {
-    var path = ["files", req.params.username, "temp", req.params.documentName.substring(0,req.params.documentName.length()-4)].join('/');
+    var path = ["files", req.params.username, "temp", req.params.documentName.substring(0,req.params.documentName.length-4)].join('/');
     path = [path, ".pdf"].join('');
     res.sendFile(path);
 });
