@@ -3,50 +3,31 @@
     <head>
         <title>TexNote</title>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/javascripts/editor.js"></script>
 
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css"/>
     </head>
 <body>
     <script>
-        var texnote = angular.module('texnote',[]);
-        texnote.controller('EditorController',['$scope', function($scope) {
-            $scope.documents = ["testdata","moretestdata"];
-            $scope.focus = null;
-            $scope.user = "testuser";
-            $scope.save = function() {
-                $http.post("api/write",{
-                    documentName: $scope.focus,
-                    username: $scope.user,
-                    contents: document.getElementById("editor").getValue()
-
-                });
-            };
-            $scope.changeDoc = function(doc) {
-                var temp= $http.get("api/read/" + $scope.user + "/" + doc);
-                document.getElementById("editor").setValue(temp);
-                $scope.focus=doc;
-                };
-            }]);
     </script>
     <div ng-controller="EditorController" id="editor-container">
-        <div id="button-container">
-            <button id="main-button" ng-click="save()"></button>
+        <div id="main-sidebar">
+            <div id="banner">
+                <h1>TeXnote</h1>
+            </div>
+            <button id="save-button" ng-click="save()">Save</button>
             <ul>
-                <li ng-repeat="document in documents" ng-click="changeDoc(document)">
-                {{document}}
+                <li ng-repeat="document in documents">
+                    <button ng-click="changeDoc(document)">
+                        {{document}}
+                    </button>
                 </li>
             </ul>
         </div>
         <div id="editor">
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.getSession().setMode("ace/mode/latex");
-        console.log("loaded");
-    </script>
 </body>
 </html>
 
