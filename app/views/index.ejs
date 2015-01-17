@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="texnote">
-<head>
-<title>TexNote</title>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
-<style type="text/css" media="screen">
-    #editor {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
-</style>
-</head>
-<div id="editor">
-</div>
+    <head>
+        <title>TexNote</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/style.css"/>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
-<script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/monokai");
-    editor.getSession().setMode("ace/mode/latex");
-</script>
+    </head>
+<body>
+    <script>
+        var texnote = angular.module('texnote',[]);
+        texnote.controller('EditorController',['$scope', function($scope) {
+            $scope.curDocs = [];
+            $scope.focus = null;
+            $scope.user = "testuser";
+            $scope.save = function() {
+                $http.post("api/write",{
+                    documentName: $scope.focus,
+                    username: $scope.user,
+                    contents: document.getElementById("editor").getValue()
+                });
+            };
+            }]);
+    </script>
+    <div ng-controller="EditorController">
+        <button id="MainButton" ng-click="$scope.save()"></button>
+        <div id="editor">
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/latex");
+        console.log("loaded");
+    </script>
 </body>
 </html>
 
