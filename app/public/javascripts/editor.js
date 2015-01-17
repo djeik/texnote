@@ -17,6 +17,10 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.editor.setTheme("ace/theme/monokai");
     $scope.editor.getSession().setMode("ace/mode/latex");
 
+    $scope.producePdf = function() {
+        $http.get(["/api/read", $scope.user, $scope.focus].join('/'));
+    };
+
     $scope.save = function() {
         $http.post("/api/write", {
             documentName: $scope.focus,
