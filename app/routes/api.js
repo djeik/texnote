@@ -16,6 +16,52 @@ router.post('/compile', function(req, res) {
         })
     });
 });
+router.post('/write', function(req, res) {
+    var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
+    fs.writeFile(path, req.body.contents, function(err) {
+        if(err) {
+            res.send({
+                status: "fail",
+                message: "unable to write file"
+            });
+        }
+        else {
+            res.send({
+                status: "ok",
+                documentName: req.body.documentName
+            });
+        }
+    });
+});
+
+router.post('/all', function(req, res) {
+    var dirPath = ["files", req.body.username].join('/');
+    var docPath = [dirPath, "persistent", req.body.documentName].join('/');
+    var tmpPath = [dirPath, "temp"].join('/');
+    var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
+	
+	exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
+        res.send({
+            stdout: stdout,
+            error: error,
+            stderr: stderr
+        })
+    });
+    fs.writeFile(path, req.body.contents, function(err) {
+        if(err) {
+            res.send({
+                status: "fail",
+                message: "unable to write file"
+            });
+        }
+        else {
+            res.send({
+                status: "ok",
+                documentName: req.body.documentName
+            });
+        }
+    });
+});
 
 router.get('/pdf/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, "temp", req.params.documentName.substring(0,req.params.documentName.length-4)].join('/');
@@ -58,24 +104,6 @@ router.get('/list/:username', function(req, res) {
                 status: "ok",
                 username: req.params.username,
                 files: files
-            });
-        }
-    });
-});
-
-router.post('/write', function(req, res) {
-    var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
-    fs.writeFile(path, req.body.contents, function(err) {
-        if(err) {
-            res.send({
-                status: "fail",
-                message: "unable to write file"
-            });
-        }
-        else {
-            res.send({
-                status: "ok",
-                documentName: req.body.documentName
             });
         }
     });

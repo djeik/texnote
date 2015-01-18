@@ -80,7 +80,7 @@ app.post('/api/inbound', function(req, res) {
     catch(err) {
         res.send({
             status: "super fail",
-            message: "hell
+            message: "hello"
         })
     }
 });

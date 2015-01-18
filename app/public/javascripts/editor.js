@@ -17,7 +17,8 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.editor.setTheme("ace/theme/monokai");
     $scope.editor.getSession().setMode("ace/mode/latex");
     $scope.socket = io();
-
+	
+	console.log("wtf");
     $scope.socket.send("AUTH testuser");
 
     $scope.socket.on("image upload", function(url) {
@@ -29,15 +30,13 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.socket.on("greeting", function(obj) {
         alert(obj.message);
     });
-
-    $scope.producePdf = function() {
-        $http.get(["/api/read", $scope.user, $scope.focus].join('/'));
-    };
+	
+	$scope.changeWordwrap = function() {
+		console.log($scope.wordwrap);
+		$scope.editor.getSession().setUseWrapMode($scope.wordwrap);
+	}
 
 	$scope.preview = function() {
-        /*$http.get(["/api/pdf/", $scope.user, $scope.focus].join('/')).success( function(data, status, headers, config) {
-
-		});*/
 		var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
     };
 
@@ -58,6 +57,19 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             console.log(result.error );
         })
     };
+	$scope.all = function() {
+		$("#preview").val("Loading...");
+		$http.post("/api/all", {
+            username: $scope.user,
+            documentName: $scope.focus,
+            contents: $scope.editor.getValue()
+        }).success(function(result){
+            console.log(result.stderr);
+            console.log(result.stdout);
+            console.log(result.error );
+			var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
+        })
+	};
 
     $scope.changeDoc = function(doc) {
         $http.get(["/api/read", $scope.user,doc].join('/'))
@@ -78,3 +90,10 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     };
 
     }]);
+$(function() {
+	
+	$("#editor-container").jqxSplitter({ width: "100%", height: "100%", panels: [
+		{collapsible: true, size: 200}, {collapsible: false}]});
+	$("#editor-preview").jqxSplitter({ width: "100%", height: "100%", panels: [
+		{collapsible: true, size: "50%"}, {collapsible: false, size: "50%"}]});
+});
