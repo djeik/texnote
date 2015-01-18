@@ -9,16 +9,25 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
                 $scope.documents = resp.files
             }
         });
-
+	$scope.saveDelay = 3000; // Idle time in ms before auto-save
     $scope.focus = null;
     $scope.user = "testuser";
     $scope.hideNotifications = true;
+	$scope.timerID = 0; // ID of the timer, so we can cancel the previous one
     $scope.editor = ace.edit("editor");
     $scope.editor.setTheme("ace/theme/monokai");
     $scope.editor.getSession().setMode("ace/mode/latex");
+	$scope.editor.on("change", function() { // Handle change and update
+		clearTimeout($scope.timerID);
+		console.log("timer started...");
+		$scope.timerID = setTimeout(function(){
+			console.log("timer HIT!");
+			$scope.all();
+		}, $scope.saveDelay);
+	});
+	
     $scope.socket = io();
 	
-	console.log("wtf");
     $scope.socket.send("AUTH testuser");
 
     $scope.socket.on("image upload", function(url) {
@@ -91,7 +100,6 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 
     }]);
 $(function() {
-	
 	$("#editor-container").jqxSplitter({ width: "100%", height: "100%", panels: [
 		{collapsible: true, size: 200}, {collapsible: false}]});
 	$("#editor-preview").jqxSplitter({ width: "100%", height: "100%", panels: [

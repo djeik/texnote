@@ -40,29 +40,26 @@ router.post('/all', function(req, res) {
     var tmpPath = [dirPath, "temp"].join('/');
     var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
 	
-	exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
-        res.send({
-            stdout: stdout,
-            error: error,
-            stderr: stderr
-        })
-    });
     fs.writeFile(path, req.body.contents, function(err) {
-        if(err) {
+        if (err) {
             res.send({
                 status: "fail",
                 message: "unable to write file"
             });
         }
         else {
+			exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
             res.send({
                 status: "ok",
-                documentName: req.body.documentName
-            });
+                documentName: req.body.documentName,
+				stdout: stdout,
+				error: error,
+				stderr: stderr
+				});
+			});
         }
-    });
+	});
 });
-
 router.get('/pdf/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, "temp", req.params.documentName.substring(0,req.params.documentName.length-4)].join('/');
     path = [path, ".pdf"].join('');
