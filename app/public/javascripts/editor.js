@@ -2,6 +2,7 @@ var texnote = angular.module('texnote',[]);
 
 texnote.controller('EditorController',['$scope', '$http', function($scope, $http) {
     $scope.documents = []
+
     $http.get("/api/list/testuser")
         .success(function(resp) {
             if(resp.status === "ok") {
@@ -9,6 +10,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
                 $scope.documents = resp.files
             }
         });
+
 	$scope.saveDelay = 3000; // Idle time in ms before auto-save
     $scope.focus = null;
     $scope.user = "testuser";
@@ -27,9 +29,10 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 	});
 
     $scope.socket = io();
-    $scope.socket.send("AUTH testuser");
+    $scope.socket.emit("auth", "testuser");
 
-    $scope.socket.on("image upload", function(url) {
+    $scope.socket.on('image upload', function(url) {
+        console.log('got urls', url.filenames.join(' and '));
         for(var i = 0; i < url.filenames.length; i++) {
             $scope.editor.insert("\\includegraphics[width=\\textwidth]{" + url.filenames[i] + "}\n");
         }

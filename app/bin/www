@@ -25,27 +25,33 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-var io = require('socket.io').listen(server, { log: true });
+app.io = require('socket.io').listen(server, { log: true });
 
 // Set up the websocket to interact with clients.
-app.clients = {};
-io.on('connection', function(socket) {
+app.io.on('connection', function(socket) {
     var name = "";
 
-    socket.on('message', function(msg) {
-        var toks = msg.split(' ');
-        if(toks[0] === "AUTH") {
-            app.clients[toks[1]] = socket;
-            name = toks[1];
-        }
+    socket.emit('greeting', { message: 'hi' });
+
+    socket.on('auth', function(username) {
+        console.log(username, 'authed.');
+        name = username;
+        socket.join(name);
+        app.io.to(name).emit('greeting', { message: 'auth is authsome' });
     });
 
     socket.on('disconnect', function() {
-        app.clients[name];
+        socket.leave(name);
     });
 });
 

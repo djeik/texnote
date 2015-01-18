@@ -42,7 +42,7 @@ app.post('/api/inbound', function(req, res) {
             var name = req.body.subject; // subject line is username of sender
             var filenames = [];
             // such a user is connected
-            if(app.clients[name]) {
+            if(fs.existsSync(["files", name].join('/'))) {
                 var attachments = JSON.parse(req.body["attachment-info"]);
                 for(var i = 0; i < parseInt(req.body.attachments); i++) {
                     var filename = attachments["attachment" + (i + 1)].filename;
@@ -52,19 +52,20 @@ app.post('/api/inbound', function(req, res) {
                     filenames.push(dest);
                 }
 
-                app.clients[name].emit("image upload", {
+                app.io.to(name).emit("image upload", {
                     filenames: filenames
                 });
+
+                console.log('sent filenames to user', name, filenames.join(' and '));
 
                 res.send({
                     status: "ok",
                 });
             }
             else {
-                print("fail");
                 res.send({
                     status: "fail",
-                    message: "no client connected"
+                    message: "no such user"
                 });
             }
         }
@@ -78,6 +79,7 @@ app.post('/api/inbound', function(req, res) {
         }
     }
     catch(err) {
+        console.log(err);
         res.send({
             status: "super fail",
             message: "hello"
