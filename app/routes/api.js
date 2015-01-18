@@ -78,14 +78,6 @@ router.post('/all', function(req, res) {
     var tmpPath = [dirPath, "temp"].join('/');
     var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
 
-	exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
-        res.send({
-            stdout: stdout,
-            error: error,
-            stderr: stderr
-        })
-    });
-
     fs.writeFile(path, req.body.contents, function(err) {
         if (err) {
             res.send({
