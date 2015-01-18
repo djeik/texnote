@@ -20,6 +20,13 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.producePdf = function() {
         $http.get(["/api/read", $scope.user, $scope.focus].join('/'));
     };
+	
+	$scope.preview = function() {
+        /*$http.get(["/api/pdf/", $scope.user, $scope.focus].join('/')).success( function(data, status, headers, config) {
+			
+		});*/
+		var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
+    };
 
     $scope.save = function() {
         $http.post("/api/write", {
