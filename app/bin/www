@@ -36,8 +36,6 @@ app.clients = {};
 io.on('connection', function(socket) {
     var name = "";
 
-    socket.emit('greeting', { message: "hi" });
-
     socket.on('message', function(msg) {
         var toks = msg.split(' ');
         if(toks[0] === "AUTH") {

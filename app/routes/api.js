@@ -17,21 +17,59 @@ router.post('/compile', function(req, res) {
     });
 });
 router.post('/write', function(req, res) {
+    if(!req.body.documentName.match(/\.tex$/)) {
+        res.send({
+            status: "fail",
+            message: "document name does not end in .tex"
+        });
+
+        return
+    }
+
     var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
-    fs.writeFile(path, req.body.contents, function(err) {
-        if(err) {
-            res.send({
-                status: "fail",
-                message: "unable to write file"
-            });
-        }
-        else {
-            res.send({
-                status: "ok",
-                documentName: req.body.documentName
-            });
-        }
-    });
+
+    var writeContents = function() {
+        fs.writeFile(path, req.body.contents, function(err) {
+            if(err) {
+                res.send({
+                    status: "fail",
+                    message: "unable to write file"
+                });
+            }
+            else {
+                res.send({
+                    status: "ok",
+                    documentName: req.body.documentName
+                });
+            }
+        });
+    }
+
+    if(req.body.contents) {
+        writeContents();
+    }
+    else {
+        fs.readFile("private/template.tex", function(err, data) {
+            if (err) {
+                writeContents(); // failed to load template, so write empty text.
+            }
+            else {
+                fs.writeFile(path, data, function(err) {
+                    if(err) {
+                        res.send({
+                            status: "fail",
+                            message: "unable to write template"
+                        });
+                    }
+
+                    res.send({
+                        status: "ok",
+                        documentName: req.body.documentName
+                    });
+                });
+            }
+        });
+    }
 });
 
 router.post('/all', function(req, res) {
@@ -39,7 +77,15 @@ router.post('/all', function(req, res) {
     var docPath = [dirPath, "persistent", req.body.documentName].join('/');
     var tmpPath = [dirPath, "temp"].join('/');
     var path = ["files", req.body.username, "persistent", req.body.documentName].join('/')
-	
+
+	exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
+        res.send({
+            stdout: stdout,
+            error: error,
+            stderr: stderr
+        })
+    });
+
     fs.writeFile(path, req.body.contents, function(err) {
         if (err) {
             res.send({
@@ -60,6 +106,7 @@ router.post('/all', function(req, res) {
         }
 	});
 });
+
 router.get('/pdf/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, "temp", req.params.documentName.substring(0,req.params.documentName.length-4)].join('/');
     path = [path, ".pdf"].join('');

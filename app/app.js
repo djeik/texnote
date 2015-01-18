@@ -49,7 +49,7 @@ app.post('/api/inbound', function(req, res) {
                     var src = ["uploads", filename].join('/');
                     var dest = ["files", name, "uploads", filename].join('/');
                     fs.rename(src, dest, function(err) { if(err) console.log(err); } );
-                    filenames.push(["..", "uploads", filename].join('/'));
+                    filenames.push(dest);
                 }
 
                 app.clients[name].emit("image upload", {

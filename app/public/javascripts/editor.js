@@ -25,9 +25,8 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 			$scope.all();
 		}, $scope.saveDelay);
 	});
-	
+
     $scope.socket = io();
-	
     $scope.socket.send("AUTH testuser");
 
     $scope.socket.on("image upload", function(url) {
@@ -39,7 +38,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.socket.on("greeting", function(obj) {
         alert(obj.message);
     });
-	
+
 	$scope.changeWordwrap = function() {
 		console.log($scope.wordwrap);
 		$scope.editor.getSession().setUseWrapMode($scope.wordwrap);
@@ -94,6 +93,9 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
                 if(resp.status === "ok") {
                     $scope.documents.push(resp.documentName);
                     $scope.newFileName = "";
+                }
+                else {
+                    console.log(JSON.stringify(resp));
                 }
             });
     };
