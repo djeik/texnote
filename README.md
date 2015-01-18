@@ -1,4 +1,12 @@
-epic webapp on its way
+Setup
+=====
 
-Install express!
-    npm install express --save
+    cd app
+    ./generate-testdata.sh
+    npm install
+
+Running
+=======
+
+    # in app/
+    bin/www

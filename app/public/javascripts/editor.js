@@ -31,7 +31,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 
     $scope.socket.on("image upload", function(url) {
         for(var i = 0; i < url.filenames.length; i++) {
-            $scope.editor.insert("\\includegraphics{" + url.filenames[i] + "}\n");
+            $scope.editor.insert("\\includegraphics[width=\\textwidth]{" + url.filenames[i] + "}\n");
         }
     });
 
