@@ -23,11 +23,6 @@ router.get('/pdf/:username/:documentName', function(req, res) {
     res.sendFile(path);
 });
 
-router.post('/inbound', function(req, res) {
-
-
-});
-
 router.get('/read/:username/:documentName', function(req, res) {
     var path = ["files", req.params.username, "persistent", req.params.documentName].join('/')
     fs.readFile(path, { encoding: "utf-8" }, function(err, data) {

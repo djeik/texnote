@@ -16,14 +16,27 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     $scope.editor = ace.edit("editor");
     $scope.editor.setTheme("ace/theme/monokai");
     $scope.editor.getSession().setMode("ace/mode/latex");
+    $scope.socket = io();
+
+    $scope.socket.send("AUTH testuser");
+
+    $scope.socket.on("image upload", function(url) {
+        for(var i = 0; i < url.filenames.length; i++) {
+            $scope.editor.insert("\\includegraphics{" + url.filenames[i] + "}\n");
+        }
+    });
+
+    $scope.socket.on("greeting", function(obj) {
+        alert(obj.message);
+    });
 
     $scope.producePdf = function() {
         $http.get(["/api/read", $scope.user, $scope.focus].join('/'));
     };
-	
+
 	$scope.preview = function() {
         /*$http.get(["/api/pdf/", $scope.user, $scope.focus].join('/')).success( function(data, status, headers, config) {
-			
+
 		});*/
 		var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
     };

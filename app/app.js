@@ -4,10 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var multer = require('multer')
+var multer = require('multer');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var api = require('./routes/api');
+var fs = require('fs');
 
 var app = express();
 
@@ -18,7 +19,10 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
-app.use(multer({dest: 'uploads/'}));
+app.use(multer( {
+    dest: 'uploads/',
+    rename: function(fieldname, filename) { return filename }
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -29,6 +33,57 @@ app.use(express.static(path.join(__dirname, 'files')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/api', api);
+
+// Handle sendgrid API posts directly here, to interact with the websockets.
+app.post('/api/inbound', function(req, res) {
+    // If we have some pictures!
+    try {
+        if(req.body.attachments) {
+            var name = req.body.subject; // subject line is username of sender
+            var filenames = [];
+            // such a user is connected
+            if(app.clients[name]) {
+                var attachments = JSON.parse(req.body["attachment-info"]);
+                for(var i = 0; i < parseInt(req.body.attachments); i++) {
+                    var filename = attachments["attachment" + (i + 1)].filename;
+                    var src = ["uploads", filename].join('/');
+                    var dest = ["files", name, "uploads", filename].join('/');
+                    fs.rename(src, dest, function(err) { if(err) console.log(err); } );
+                    filenames.push(["..", "uploads", filename].join('/'));
+                }
+
+                app.clients[name].emit("image upload", {
+                    filenames: filenames
+                });
+
+                res.send({
+                    status: "ok",
+                });
+            }
+            else {
+                print("fail");
+                res.send({
+                    status: "fail",
+                    message: "no client connected"
+                });
+            }
+        }
+        // doesn't really matter, since this is still a 200 and that's all Sendgrid
+        // needs to be happy. We just need to avoid sending back a 500 or such.
+        else {
+            res.send({
+                status: "fail",
+                message: "no attachments"
+            });
+        }
+    }
+    catch(err) {
+        res.send({
+            status: "super fail",
+            message: "hell
+        })
+    }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -60,6 +115,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;
