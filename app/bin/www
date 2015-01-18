@@ -29,6 +29,29 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+var io = require('socket.io').listen(server, { log: true });
+
+// Set up the websocket to interact with clients.
+app.clients = {};
+io.on('connection', function(socket) {
+    var name = "";
+
+    socket.emit('greeting', { message: "hi" });
+
+    socket.on('message', function(msg) {
+        var toks = msg.split(' ');
+        if(toks[0] === "AUTH") {
+            app.clients[toks[1]] = socket;
+            name = toks[1];
+        }
+    });
+
+    socket.on('disconnect', function() {
+        app.clients[name];
+    });
+});
+
+
 /**
  * Normalize a port into a number, string, or false.
  */
