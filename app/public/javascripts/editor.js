@@ -11,6 +11,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             }
         });
 
+    $scope.pdfUrl = "";
 	$scope.saveDelay = 3000; // Idle time in ms before auto-save
     $scope.focus = null;
     $scope.user = "testuser";
@@ -47,10 +48,6 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
 		$scope.editor.getSession().setUseWrapMode($scope.wordwrap);
 	}
 
-	$scope.preview = function() {
-		var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
-    };
-
     $scope.save = function() {
         $http.post("/api/write", {
             documentName: $scope.focus,
@@ -58,6 +55,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             contents: $scope.editor.getValue()
         });
     };
+
     $scope.compile = function() {
         $http.post("/api/compile", {
             username: $scope.user,
@@ -68,8 +66,8 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             console.log(result.error );
         })
     };
+
 	$scope.all = function() {
-		$("#preview").val("Loading...");
 		$http.post("/api/all", {
             username: $scope.user,
             documentName: $scope.focus,
@@ -78,7 +76,14 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             console.log(result.stderr);
             console.log(result.stdout);
             console.log(result.error );
-			var trash = new PDFObject({url: [$scope.user, "temp", [$scope.focus.substring(0, $scope.focus.length-4),".pdf"].join("")].join('/')}).embed("preview");
+            $scope.pdfUrl = [
+                $scope.user,
+                "temp",
+                [
+                    $scope.focus.substring(0, $scope.focus.length - 4),
+                    ".pdf"
+                ].join("")
+            ].join('/');
         })
 	};
 
@@ -104,6 +109,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     };
 
     }]);
+
 $(function() {
 	$("#editor-container").jqxSplitter({ width: "100%", height: "100%", panels: [
 		{collapsible: true, size: 200}, {collapsible: false}]});

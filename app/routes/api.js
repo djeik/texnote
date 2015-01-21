@@ -87,14 +87,14 @@ router.post('/all', function(req, res) {
         }
         else {
 			exec(['pdflatex -halt-on-error -output-directory', tmpPath, docPath].join(' '), function(error, stdout, stderr) {
-            res.send({
-                status: "ok",
-                documentName: req.body.documentName,
-				stdout: stdout,
-				error: error,
-				stderr: stderr
-				});
-			});
+                res.send({
+                    status: "ok",
+                    documentName: req.body.documentName,
+                    stdout: stdout,
+                    error: error,
+                    stderr: stderr
+                });
+            });
         }
 	});
 });

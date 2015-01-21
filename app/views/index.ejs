@@ -40,7 +40,11 @@
             <button id="compile-button" ng-click="compile()"> Compile </button>
             <button id="preview-button" ng-click="preview()"> Preview </button>
             <button id="all-button" ng-click="all()">UPDATE</button>
-			<div class="slideThree"><input type="checkbox" id="wordwrap" ng-model="wordwrap" ng-change="changeWordwrap()" /><label for="wordwrap"></label></div><label for="wordwrap">Word Wrap</label>
+			<div class="slideThree">
+                <label for="wordwrap">Word Wrap</label>
+                <input type="checkbox" id="wordwrap"
+                    ng-model="wordwrap" ng-change="changeWordwrap()" />
+            </div>
             <ul>
                 <li ng-repeat="document in documents">
                     <button ng-click="changeDoc(document)">
@@ -57,7 +61,12 @@
 		<div>
 			<div id="editor-preview">
 				<div id="editor"></div>
-				<div id="preview"><p>(no preview)</p></div>
+				<div id="preview">
+                    <object data="{{pdfUrl}}" type="application/pdf"
+                        width="100%" height="100%">
+                            <p>(no preview)</p>
+                    </object>
+                </div>
 			</div>
 		</div>
     </div>
