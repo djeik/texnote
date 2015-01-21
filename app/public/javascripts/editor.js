@@ -68,6 +68,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
     };
 
 	$scope.all = function() {
+        console.log("called");
 		$http.post("/api/all", {
             username: $scope.user,
             documentName: $scope.focus,
@@ -85,6 +86,10 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
                     ".pdf"
                 ].join("")
             ].join('/');
+
+            $('#pdfID').attr('data',$scope.pdfUrl);
+            $('#pdfID').load($scope.pdfUrl);
+
         })
 	};
 
