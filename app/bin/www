@@ -41,13 +41,10 @@ app.io = require('socket.io').listen(server, { log: true });
 app.io.on('connection', function(socket) {
     var name = "";
 
-    socket.emit('greeting', { message: 'hi' });
-
     socket.on('auth', function(username) {
         console.log(username, 'authed.');
         name = username;
         socket.join(name);
-        app.io.to(name).emit('greeting', { message: 'auth is authsome' });
     });
 
     socket.on('disconnect', function() {
