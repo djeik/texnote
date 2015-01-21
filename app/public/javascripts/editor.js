@@ -76,6 +76,7 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             console.log(result.stderr);
             console.log(result.stdout);
             console.log(result.error );
+            $scope.pdfUrl = "";
             $scope.pdfUrl = [
                 $scope.user,
                 "temp",
