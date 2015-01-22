@@ -88,7 +88,6 @@ texnote.controller('EditorController',['$scope', '$http', function($scope, $http
             ].join('/');
 
             $('#pdfID').attr('data',$scope.pdfUrl);
-            $('#pdfID').load($scope.pdfUrl);
 
         })
 	};
