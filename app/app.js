@@ -5,10 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var fs = require('fs');
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var session = require('express-session');
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var api = require('./routes/api');
-var fs = require('fs');
 
 var app = express();
 
@@ -29,6 +33,40 @@ app.use(cookieParser());
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'files')));
+
+app.use(session({
+    secret: 'baker cat',
+    resave: false,
+    saveUninitialized: true
+}));
+
+app.use(passport.session());
+
+accounts = [
+    {
+        username: "jake",
+        password: "tits",
+        secretData: {
+            filenames: [
+                "supercool.tex"
+            ]
+        }
+    }
+];
+
+passport.use(new LocalStrategy(function (username, password, done) {
+    for(var i = 0; i < accounts.length; i++) {
+        if(accounts[i].username == username) {
+            if(accounts[i].password == password) {
+                return done(null, accounts[i]);
+            }
+            else {
+                return done(null, false, { message: "you suck" });
+            }
+        }
+    }
+    return done(null, false, { message: "you really suck" });
+}));
 
 app.use('/', routes);
 app.use('/users', users);
